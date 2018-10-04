@@ -30,14 +30,14 @@ class Test {
         // Uncomment line by line to test
 
         // Tokenization ---------------------------
-        /*t("1 + 10", "1 + 10");  // Arguments are input and expected output
+        t("1 + 10", "1 + 10");  // Arguments are input and expected output
         t("1+ 10", "1 + 10");   // Expected is in fact a list [ "1", "+", "10"]
         t("1 +10", "1 + 10");
         t("1+10", "1 + 10");
         t("(1+10) ", "( 1 + 10 )");  // List is [ "(", "1", "+", "10", ")" ]
         t("2 *( 1+10) ", "2 * ( 1 + 10 )");
         t("(1 +2) /2 *( 1+10) ", "( 1 + 2 ) / 2 * ( 1 + 10 )");
-        */
+
 
         // Infix to postfix -----------------------
         /*
@@ -134,19 +134,19 @@ class Test {
     }
 
     // Infix 2 postfix
-    void i2p(String infix, String expected) {
-        List<String> tokens = calculator.tokenize(infix);
-        List<String> postfix = calculator.infix2Postfix(tokens);
-        String result = String.join(" ", postfix);
-        out.println(result.equals(expected));
-    }
-
-    // Evaluation
-    void e(String infix, double expected) {
-        List<String> tokens = calculator.tokenize(infix);
-        List<String> postfix = calculator.infix2Postfix(tokens);
-        double result = calculator.evalPostfix(postfix);
-        out.println(result == expected);
-    }
+//    void i2p(String infix, String expected) {
+//        List<String> tokens = calculator.tokenize(infix);
+//        List<String> postfix = calculator.infix2Postfix(tokens);
+//        String result = String.join(" ", postfix);
+//        out.println(result.equals(expected));
+//    }
+//
+//    // Evaluation
+//    void e(String infix, double expected) {
+//        List<String> tokens = calculator.tokenize(infix);
+//        List<String> postfix = calculator.infix2Postfix(tokens);
+//        double result = calculator.evalPostfix(postfix);
+//        out.println(result == expected);
+//    }
 
 }

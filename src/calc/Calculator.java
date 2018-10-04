@@ -5,7 +5,6 @@ import java.util.*;
 import static java.lang.Double.NaN;
 import static java.lang.Math.pow;
 
-
 /*
  *   A calculator for rather simple arithmetic expressions
  *
@@ -65,13 +64,6 @@ class Calculator {
 
     // TODO Methods
 
-
-
-
-
-
-
-
     int getPrecedence(String op) {
         if ("+-".contains(op)) {
             return 2;
@@ -103,5 +95,36 @@ class Calculator {
     // ---------- Tokenize -----------------------
 
     // TODO Methods to tokenize
+    public List<String> tokenize(String s) {
+        List<Character> chars = new ArrayList<>();
+        for (int i = 0; i < s.length(); i++) {
+            if (Character.isWhitespace(s.charAt(i))) {
+                continue;
+            }
+            chars.add(s.charAt(i));
+        }
+        List<String> result = combineDigits(chars);
+        System.out.println(result.toString());
+        return result;
+    }
 
+    private List<String> combineDigits(List<Character> chars) {
+        List<String> result = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < chars.size(); i++) {
+            if (Character.isDigit(chars.get(i))) {
+                sb.append(chars.get(i));
+            } else {
+                if (!sb.toString().isEmpty()) {
+                    result.add(sb.toString());
+                }
+                result.add(String.valueOf(chars.get(i)));
+                sb = new StringBuilder();
+            }
+        }
+        if (!sb.toString().isEmpty()) {
+            result.add(sb.toString());
+        }
+        return result;
+    }
 }
