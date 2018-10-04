@@ -61,7 +61,103 @@ class Calculator {
     }
 
     // ------- Infix 2 Postfix ------------------------
+//    while there are tokens to be read:
+//    read a token.
+//    if the token is a number, then:
+//    push it to the output queue.
+//            if the token is a function then:
+//    push it onto the operator stack
+//    if the token is an operator, then:
+//            while ((there is a function at the top of the operator stack)
+//    or (there is an operator at the top of the operator stack with greater precedence)
+//    or (the operator at the top of the operator stack has equal precedence and is left associative))
+//    and (the operator at the top of the operator stack is not a left bracket):
+//    pop operators from the operator stack onto the output queue.
+//    push it onto the operator stack.
+//            if the token is a left bracket (i.e. "("), then:
+//    push it onto the operator stack.
+//            if the token is a right bracket (i.e. ")"), then:
+//            while the operator at the top of the operator stack is not a left bracket:
+//    pop the operator from the operator stack onto the output queue.
+//    pop the left bracket from the stack.
+//    /* if the stack runs out without finding a left bracket, then there are mismatched parentheses. */
+//if there are no more tokens to read:
+//            while there are still operator tokens on the stack:
+//    /* if the operator token on the top of the stack is a bracket, then there are mismatched parentheses. */
+//    pop the operator from the operator stack onto the output queue.
+//            exit.
 
+    //TODO ^
+    public List<String> infixToPostfix(List<String> infix) {
+        ArrayDeque<String> operators = new ArrayDeque<>();
+        ArrayList<String> result = new ArrayList<>();
+        ArrayList<String> parenthesesList = new ArrayList<>();
+
+        boolean readingParentheses = false;
+        for (String s : infix) {
+            if (readingParentheses) { //reading stuff in a parentheses
+                if (s.equals(")")) {
+                    //The content in a parentheses is handled separately
+                    List<String> parentResult = infixToPostfix(parenthesesList);
+                    for (int i = 0; i < parenthesesList.size(); i++) {
+                        result.add(parentResult.get(i));
+                    }
+                    readingParentheses = false;
+                    continue;
+                } else {
+                    parenthesesList.add(s);
+                }
+            } else {
+                if (s.equals("(")) { //TODO throw exceptions
+                    readingParentheses = true;
+                    continue;
+                } else if (isNumber(s)) { //if any of the chars is a digit, then the entire string is a number
+                    result.add(s);
+                } else if (isOperator(s)) {
+                    //If the stack operator is of higher or equal value than the read operator, pop the operator to the result
+                    if (operators.peek() != null && getPrecedence(operators.peek()) >= getPrecedence(s)) {
+                        //TODO use assc instead
+                        if (operators.peek().equals("^") && s.equals("^")) {
+                            operators.push(s);
+                            continue;
+                        }
+                        result.add(operators.pop());
+                    }
+                    operators.push(s);
+
+                }
+            }
+        }
+
+        for (String s : operators) {
+            result.add(operators.pop());
+        }
+
+        System.out.println(result);
+        return result;
+    }
+
+    private boolean isNumber(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            if (!Character.isDigit(s.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isOperator(String s) {
+        switch (s) {
+            case "+":
+            case "-":
+            case "*":
+            case "/":
+            case "^":
+                return true;
+            default:
+                return false;
+        }
+    }
     // TODO Methods
 
     int getPrecedence(String op) {
