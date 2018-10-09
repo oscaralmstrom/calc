@@ -89,12 +89,9 @@ class Calculator {
 //    pop the operator from the operator stack onto the output queue.
 //            exit.
 
-    //TODO ^
     public List<String> infixToPostfix(List<String> infix) {
         ArrayDeque<String> operators = new ArrayDeque<>();
-        ArrayList<String> result = new ArrayList<>();
-        ArrayList<String> parenthesesList = new ArrayList<>();
-
+        ArrayList<String> result = new ArrayList<>(), parenthesesList = new ArrayList<>();
         boolean readingParentheses = false;
         for (String s : infix) {
             if (readingParentheses) { //reading stuff in a parentheses
@@ -105,28 +102,25 @@ class Calculator {
                         result.add(parentResult.get(i));
                     }
                     readingParentheses = false;
-                    continue;
                 } else {
                     parenthesesList.add(s);
                 }
             } else {
                 if (s.equals("(")) { //TODO throw exceptions
                     readingParentheses = true;
-                    continue;
                 } else if (isNumber(s)) { //if any of the chars is a digit, then the entire string is a number
                     result.add(s);
                 } else if (isOperator(s)) {
-                    //If the stack operator is of higher or equal value than the read operator, pop the operator to the result
+                    //If the stack operator is of higher or equal value than the read operator, pop the stack operator to the result
                     if (operators.peek() != null && getPrecedence(operators.peek()) >= getPrecedence(s)) {
-                        //TODO use assc instead
-                        if (operators.peek().equals("^") && s.equals("^")) {
+                        //If s has associativity to the right (eg. if s is equal to "^"), the push s the the operator stack
+                        if (getAssociativity(operators.peek()) == Assoc.RIGHT && getAssociativity(s) == Assoc.RIGHT) {
                             operators.push(s);
                             continue;
                         }
                         result.add(operators.pop());
                     }
                     operators.push(s);
-
                 }
             }
         }
@@ -134,8 +128,7 @@ class Calculator {
         for (String s : operators) {
             result.add(operators.pop());
         }
-
-        System.out.println(result);
+//        System.out.println(result);
         return result;
     }
 
@@ -201,7 +194,7 @@ class Calculator {
             chars.add(s.charAt(i));
         }
         List<String> result = combineDigits(chars);
-        System.out.println(result.toString());
+//        System.out.println(result.toString());
         return result;
     }
 
