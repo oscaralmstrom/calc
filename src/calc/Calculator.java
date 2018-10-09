@@ -62,65 +62,36 @@ class Calculator {
 
     // ------- Infix 2 Postfix ------------------------
 
-    // TODO Methods
-    //    while there are tokens to be read:
-//    read a token.
-//    if the token is a number, then:
-//    push it to the output queue.
-//            if the token is a function then:
-//    push it onto the operator stack
-//    if the token is an operator, then:
-//            while ((there is a function at the top of the operator stack)
-//    or (there is an operator at the top of the operator stack with greater precedence)
-//    or (the operator at the top of the operator stack has equal precedence and is left associative))
-//    and (the operator at the top of the operator stack is not a left bracket):
-//    pop operators from the operator stack onto the output queue.
-//    push it onto the operator stack.
-//            if the token is a left bracket (i.e. "("), then:
-//    push it onto the operator stack.
-//            if the token is a right bracket (i.e. ")"), then:
-//            while the operator at the top of the operator stack is not a left bracket:
-//    pop the operator from the operator stack onto the output queue.
-//    pop the left bracket from the stack.
-//    /* if the stack runs out without finding a left bracket, then there are mismatched parentheses. */
-//if there are no more tokens to read:
-//            while there are still operator tokens on the stack:
-//    /* if the operator token on the top of the stack is a bracket, then there are mismatched parentheses. */
-//    pop the operator from the operator stack onto the output queue.
-//            exit.
-
     public List<String> infixToPostfix(List<String> infix) {
         ArrayDeque<String> operators = new ArrayDeque<>();
         ArrayList<String> result = new ArrayList<>(), parenthesesList = new ArrayList<>();
         boolean readingParentheses = false;
-        for (String s : infix) {
+        for (String symbol : infix) {
             if (readingParentheses) { //reading stuff in a parentheses
-                if (s.equals(")")) {
+                if (symbol.equals(")")) {
                     //The content in a parentheses is handled separately
-                    List<String> parentResult = infixToPostfix(parenthesesList);
-                    for (int i = 0; i < parenthesesList.size(); i++) {
-                        result.add(parentResult.get(i));
-                    }
+                    List<String> parResult = infixToPostfix(parenthesesList);
+                    result.addAll(parResult);
                     readingParentheses = false;
                 } else {
-                    parenthesesList.add(s);
+                    parenthesesList.add(symbol);
                 }
             } else {
-                if (s.equals("(")) { //TODO throw exceptions
+                if (symbol.equals("(")) { //TODO throw exceptions
                     readingParentheses = true;
-                } else if (isNumber(s)) { //if any of the chars is a digit, then the entire string is a number
-                    result.add(s);
-                } else if (isOperator(s)) {
+                } else if (isNumber(symbol)) { //if any of the chars is a digit, then the entire string is a number
+                    result.add(symbol);
+                } else if (isOperator(symbol)) {
                     //If the stack operator is of higher or equal value than the read operator, pop the stack operator to the result
-                    if (operators.peek() != null && getPrecedence(operators.peek()) >= getPrecedence(s)) {
+                    if (operators.peek() != null && getPrecedence(operators.peek()) >= getPrecedence(symbol)) {
                         //If s has associativity to the right (eg. if s is equal to "^"), the push s the the operator stack
-                        if (getAssociativity(operators.peek()) == Assoc.RIGHT && getAssociativity(s) == Assoc.RIGHT) {
-                            operators.push(s);
+                        if (getAssociativity(operators.peek()) == Assoc.RIGHT && getAssociativity(symbol) == Assoc.RIGHT) {
+                            operators.push(symbol);
                             continue;
                         }
                         result.add(operators.pop());
                     }
-                    operators.push(s);
+                    operators.push(symbol);
                 }
             }
         }
@@ -181,7 +152,6 @@ class Calculator {
         }
     }
 
-
     // ---------- Tokenize -----------------------
 
     // TODO Methods to tokenize
@@ -218,3 +188,29 @@ class Calculator {
         return result;
     }
 }
+// TODO Methods
+//    while there are tokens to be read:
+//    read a token.
+//    if the token is a number, then:
+//    push it to the output queue.
+//            if the token is a function then:
+//    push it onto the operator stack
+//    if the token is an operator, then:
+//            while ((there is a function at the top of the operator stack)
+//    or (there is an operator at the top of the operator stack with greater precedence)
+//    or (the operator at the top of the operator stack has equal precedence and is left associative))
+//    and (the operator at the top of the operator stack is not a left bracket):
+//    pop operators from the operator stack onto the output queue.
+//    push it onto the operator stack.
+//            if the token is a left bracket (i.e. "("), then:
+//    push it onto the operator stack.
+//            if the token is a right bracket (i.e. ")"), then:
+//            while the operator at the top of the operator stack is not a left bracket:
+//    pop the operator from the operator stack onto the output queue.
+//    pop the left bracket from the stack.
+//    /* if the stack runs out without finding a left bracket, then there are mismatched parentheses. */
+//if there are no more tokens to read:
+//            while there are still operator tokens on the stack:
+//    /* if the operator token on the top of the stack is a bracket, then there are mismatched parentheses. */
+//    pop the operator from the operator stack onto the output queue.
+//            exit.
