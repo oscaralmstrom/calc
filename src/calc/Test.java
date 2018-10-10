@@ -10,7 +10,7 @@ import static java.lang.System.out;
 /**
  * This is a test program for the Calculator (testing a Calculator object)
  * It should output true for everything
- *
+ * <p>
  * Right click and run ...
  */
 class Test {
@@ -26,7 +26,6 @@ class Test {
         // Here you could write your own test for any "small" helper methods
 
 
-
         // Uncomment line by line to test
 
         // Tokenization ---------------------------
@@ -38,9 +37,9 @@ class Test {
         t("2 *( 1+10) ", "2 * ( 1 + 10 )");
         t("(1 +2) /2 *( 1+10) ", "( 1 + 2 ) / 2 * ( 1 + 10 )");
 
-
+        System.out.println("---");
         // Infix to postfix -----------------------
-        /*
+
         i2p("1+10", "1 10 +");
         i2p("1+2+3", "1 2 + 3 +");
         i2p("1+2-3", "1 2 + 3 -");
@@ -52,7 +51,10 @@ class Test {
         i2p("4^3*2", "4 3 ^ 2 *");
         i2p("(1+2)*3", "1 2 + 3 *");
         i2p("2^(1+1)", "2 1 1 + ^");
-        */
+
+
+        System.out.println("---");
+
 
         // Evaluation ------------------------------
         /*
@@ -134,13 +136,13 @@ class Test {
     }
 
     // Infix 2 postfix
-//    void i2p(String infix, String expected) {
-//        List<String> tokens = calculator.tokenize(infix);
-//        List<String> postfix = calculator.infix2Postfix(tokens);
-//        String result = String.join(" ", postfix);
-//        out.println(result.equals(expected));
-//    }
-//
+    void i2p(String infix, String expected) {
+        List<String> tokens = calculator.tokenize(infix);
+        List<String> postfix = calculator.infixToPostfix(tokens);
+        String result = String.join(" ", postfix);
+        out.println(result.equals(expected));
+    }
+
 //    // Evaluation
 //    void e(String infix, double expected) {
 //        List<String> tokens = calculator.tokenize(infix);
