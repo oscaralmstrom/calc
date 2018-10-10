@@ -41,12 +41,12 @@ class Calculator {
 
     // TODO Eval methods
 
-    public double evalPostfix (List<String> list){
+    public double evalPostfix(List<String> list) {
         ArrayDeque<String> stack = new ArrayDeque<>();
-        for (String element:list){
+        for (String element : list) {
             stack.push(element);
-            if (isOperator(stack.peek())){
-                stack.push(String.valueOf(applyOperator(stack.pop(),Double.parseDouble(stack.pop()), Double.parseDouble(stack.pop()))));
+            if (isOperator(stack.peek())) {
+                stack.push(String.valueOf(applyOperator(stack.pop(), Double.parseDouble(stack.pop()), Double.parseDouble(stack.pop()))));
             }
         }
         return Double.parseDouble(stack.pop());
