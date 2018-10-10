@@ -41,6 +41,17 @@ class Calculator {
 
     // TODO Eval methods
 
+    public double eval (List<String> list){
+        ArrayDeque<String> stack = new ArrayDeque<>();
+        for (String element:list){
+            stack.push(element);
+            if (isOperator(stack.peek())){
+                stack.push(String.valueOf(applyOperator(stack.pop(),Double.parseDouble(stack.pop()), Double.parseDouble(stack.pop()))));
+            }
+        }
+        return 0;
+    }
+
     double applyOperator(String op, double d1, double d2) {
         switch (op) {
             case "+":
