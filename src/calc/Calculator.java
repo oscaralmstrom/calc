@@ -45,8 +45,16 @@ class Calculator {
         ArrayDeque<String> stack = new ArrayDeque<>();
         for (String element : list) {
             stack.push(element);
-            if (isOperator(stack.peek())) {
-                stack.push(String.valueOf(applyOperator(stack.pop(), Double.parseDouble(stack.pop()), Double.parseDouble(stack.pop()))));
+            String s = stack.peek();
+            if (s != null && isOperator(s)) {
+                String operator = stack.pop();
+                String a = stack.pop();
+                String b = stack.pop();
+                if (isNumber(a) && isNumber(b)) {
+                    stack.push(String.valueOf(applyOperator(operator, Double.valueOf(a), Double.valueOf(b))));
+                } else {
+                    throw new RuntimeException(MISSING_OPERAND);
+                }
             }
         }
         return Double.parseDouble(stack.pop());
@@ -116,7 +124,7 @@ class Calculator {
 
     private boolean isNumber(String s) {
         for (int i = 0; i < s.length(); i++) {
-            if (!Character.isDigit(s.charAt(i))) {
+            if (!Character.isDigit(s.charAt(i)) && s.charAt(i) != '.') {
                 return false;
             }
         }
