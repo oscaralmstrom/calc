@@ -140,12 +140,12 @@ class Test {
         out.println(result.equals(expected));
     }
 //
-//    // Evaluation
-//    void e(String infix, double expected) {
-//        List<String> tokens = calculator.tokenize(infix);
-//        List<String> postfix = calculator.infix2Postfix(tokens);
-//        double result = calculator.evalPostfix(postfix);
-//        out.println(result == expected);
-//    }
+    // Evaluation
+    void e(String infix, double expected) {
+        List<String> tokens = calculator.tokenize(infix);
+        List<String> postfix = calculator.infixToPostfix(tokens);
+        double result = calculator.evalPostfix(postfix);
+        out.println(result == expected);
+    }
 
 }

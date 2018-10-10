@@ -41,7 +41,7 @@ class Calculator {
 
     // TODO Eval methods
 
-    public double eval (List<String> list){
+    public double evalPostfix (List<String> list){
         ArrayDeque<String> stack = new ArrayDeque<>();
         for (String element:list){
             stack.push(element);
@@ -49,7 +49,7 @@ class Calculator {
                 stack.push(String.valueOf(applyOperator(stack.pop(),Double.parseDouble(stack.pop()), Double.parseDouble(stack.pop()))));
             }
         }
-        return 0;
+        return Double.parseDouble(stack.pop());
     }
 
     double applyOperator(String op, double d1, double d2) {
