@@ -48,13 +48,14 @@ class Calculator {
             stack.push(element);
             String s = stack.peek();
             if (s != null && isOperator(s)) {
+                if (stack.size() < 3) throw new IllegalArgumentException(MISSING_OPERAND);
                 String operator = stack.pop();
                 String a = stack.pop();
                 String b = stack.pop();
                 if (isNumber(a) && isNumber(b)) {
                     stack.push(String.valueOf(applyOperator(operator, Double.valueOf(a), Double.valueOf(b))));
                 } else {
-                    throw new RuntimeException(MISSING_OPERAND);
+                    throw new IllegalArgumentException(MISSING_OPERAND);
                 }
             }
         }
@@ -151,16 +152,7 @@ class Calculator {
     }
 
     private boolean isOperator(String s) {
-        switch (s) {
-            case "+":
-            case "-":
-            case "*":
-            case "/":
-            case "^":
-                return true;
-            default:
-                return false;
-        }
+        return OPERATORS.contains(s);
     }
 
     int getPrecedence(String op) {
@@ -194,15 +186,36 @@ class Calculator {
 
     // TODO Methods to tokenize
     public List<String> tokenize(String s) {
-        List<Character> chars = new ArrayList<>();
+        List<String> tokens = new ArrayList<>();
+        ArrayDeque<Character> digitStack = new ArrayDeque<>();
         for (int i = 0; i < s.length(); i++) {
-            if (Character.isWhitespace(s.charAt(i))) {
-                continue;
+            if (Character.isDigit(s.charAt(i))) {
+                digitStack.push(s.charAt(i)); //pushes the digit to the digit stack, as it might be part of a number
+            } else if (isOperator(String.valueOf(s.charAt(i))) || s.charAt(i) == '(' || s.charAt(i) == ')') {
+                if (digitStack.isEmpty()) {
+                    tokens.add(String.valueOf(s.charAt(i))); //simply add the value to the tokens
+                } else {
+                    //the digit stack isn't empty -> the digit stack values are reversed and merged into one string (a number)
+                    tokens.add(reverseStackToString(digitStack));
+                    digitStack.clear();
+                    tokens.add(String.valueOf(s.charAt(i))); //adds the operator to the tokens
+                }
             }
-            chars.add(s.charAt(i));
         }
-        List<String> result = combineDigits(chars);
-        return result;
+        //Adds any remaining digits to the tokens, by merging them into one string (a number)
+        if (!digitStack.isEmpty()) {
+            tokens.add(reverseStackToString(digitStack));
+        }
+        return tokens;
+    }
+
+    private String reverseStackToString(ArrayDeque stack) {
+        if (stack.isEmpty()) throw new IllegalArgumentException("Empty stack!");
+        StringBuilder sb = new StringBuilder();
+        while (!stack.isEmpty()) {
+            sb.append(stack.pop());
+        }
+        return sb.reverse().toString();
     }
 
     private List<String> combineDigits(List<Character> chars) {
