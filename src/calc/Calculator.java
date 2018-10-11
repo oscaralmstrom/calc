@@ -143,6 +143,7 @@ class Calculator {
     }
 
     private boolean isNumber(String s) {
+        if (s == null || s.length() == 0) return false;
         for (int i = 0; i < s.length(); i++) {
             if (!Character.isDigit(s.charAt(i)) && s.charAt(i) != '.') {
                 return false;
@@ -152,6 +153,7 @@ class Calculator {
     }
 
     private boolean isOperator(String s) {
+        if (s == null) return false;
         return OPERATORS.contains(s);
     }
 
@@ -184,33 +186,32 @@ class Calculator {
 
     // ---------- Tokenize -----------------------
 
-    // TODO Methods to tokenize
     public List<String> tokenize(String s) {
         List<String> tokens = new ArrayList<>();
-        ArrayDeque<Character> digitStack = new ArrayDeque<>();
+        ArrayDeque<Character> digits = new ArrayDeque<>();
         for (int i = 0; i < s.length(); i++) {
             if (Character.isDigit(s.charAt(i))) {
-                digitStack.push(s.charAt(i)); //pushes the digit to the digit stack, as it might be part of a number
+                digits.push(s.charAt(i)); //pushes the digit to the digit stack, as it might be part of a number
             } else if (isOperator(String.valueOf(s.charAt(i))) || s.charAt(i) == '(' || s.charAt(i) == ')') {
-                if (digitStack.isEmpty()) {
+                if (digits.isEmpty()) {
                     tokens.add(String.valueOf(s.charAt(i))); //simply add the value to the tokens
                 } else {
                     //the digit stack isn't empty -> the digit stack values are reversed and merged into one string (a number)
-                    tokens.add(reverseStackToString(digitStack));
-                    digitStack.clear();
+                    tokens.add(reverseStackToString(digits));
+                    digits.clear();
                     tokens.add(String.valueOf(s.charAt(i))); //adds the operator to the tokens
                 }
             }
         }
-        //Adds any remaining digits to the tokens, by merging them into one string (a number)
-        if (!digitStack.isEmpty()) {
-            tokens.add(reverseStackToString(digitStack));
+        //Adds any remaining digits to the tokens, by merging them into one string (representing a number)
+        if (!digits.isEmpty()) {
+            tokens.add(reverseStackToString(digits));
         }
         return tokens;
     }
 
     private String reverseStackToString(ArrayDeque stack) {
-        if (stack.isEmpty()) throw new IllegalArgumentException("Empty stack!");
+        if (stack == null || stack.isEmpty()) throw new IllegalArgumentException("Invalid stack!");
         StringBuilder sb = new StringBuilder();
         while (!stack.isEmpty()) {
             sb.append(stack.pop());
@@ -218,6 +219,7 @@ class Calculator {
         return sb.reverse().toString();
     }
 
+    /*
     private List<String> combineDigits(List<Character> chars) {
         List<String> result = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
@@ -237,6 +239,7 @@ class Calculator {
         }
         return result;
     }
+    */
 }
 // TODO Methods
 //    while there are tokens to be read:
