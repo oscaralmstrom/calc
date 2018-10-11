@@ -117,7 +117,9 @@ class Calculator {
                             operators.push(symbol);
                             continue;
                         }
-                        result.add(operators.pop());
+                        while (!operators.isEmpty()){
+                            result.add(operators.pop());
+                        }
                     }
                     operators.push(symbol);
                 }
