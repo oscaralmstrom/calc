@@ -82,17 +82,26 @@ class Calculator {
     // ------- Infix 2 Postfix ------------------------
 
     public List<String> infixToPostfix(List<String> infix) {
-        ArrayDeque<String> operators = new ArrayDeque<>();
+        ArrayDeque<String> operators = new ArrayDeque<>(), parenthesesStack = new ArrayDeque<>();
         ArrayList<String> result = new ArrayList<>(), parenthesesList = new ArrayList<>();
         boolean readingParentheses = false;
         for (String symbol : infix) {
             if (readingParentheses) { //reading stuff in a parentheses
-                if (symbol.equals(")")) {
-                    //The content in a parentheses is handled separately
-                    List<String> parResult = infixToPostfix(parenthesesList);
-                    result.addAll(parResult);
-                    readingParentheses = false;
-                } else {
+                if (symbol.equals("(")) {
+                    parenthesesStack.push(symbol);
+                    parenthesesList.add(symbol);
+                } else if (symbol.equals(")")) {
+                    if (parenthesesStack.isEmpty()) {
+                        //The content in a parentheses is handled separately
+                        List<String> parResult = infixToPostfix(parenthesesList);
+                        result.addAll(parResult);
+                        readingParentheses = false;
+                    }else{
+                        parenthesesStack.pop();
+                        parenthesesList.add(symbol);
+                    }
+                }
+                else {
                     parenthesesList.add(symbol);
                 }
             } else {
@@ -115,7 +124,8 @@ class Calculator {
             }
         }
 
-        for (String s : operators) {
+        for (
+                String s : operators) {
             result.add(operators.pop());
         }
 //        System.out.println(result);
