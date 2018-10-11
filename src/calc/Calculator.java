@@ -96,12 +96,11 @@ class Calculator {
                         List<String> parResult = infixToPostfix(parenthesesList);
                         result.addAll(parResult);
                         readingParentheses = false;
-                    }else{
+                    } else {
                         parenthesesStack.pop();
                         parenthesesList.add(symbol);
                     }
-                }
-                else {
+                } else {
                     parenthesesList.add(symbol);
                 }
             } else {
@@ -109,25 +108,27 @@ class Calculator {
                     readingParentheses = true;
                 } else if (isNumber(symbol)) { //if any of the chars is a digit, then the entire string is a number
                     result.add(symbol);
-                } else if (isOperator(symbol)) {
+                } else {
                     //If the stack operator is of higher or equal value than the read operator, pop the stack operator to the result
-                    if (operators.peek() != null && getPrecedence(operators.peek()) >= getPrecedence(symbol)) {
-                        //If s has associativity to the right (eg. if s is equal to "^"), the push s the the operator stack
-                        if (getAssociativity(operators.peek()) == Assoc.RIGHT && getAssociativity(symbol) == Assoc.RIGHT) {
-                            operators.push(symbol);
-                            continue;
-                        }
-                        while (!operators.isEmpty()){
+//                    if (operators.peek() != null && getPrecedence(operators.peek()) >= getPrecedence(symbol)) {
+                    //If symbol has associativity to the right (eg. if symbol is equal to "^"), the push symbol the the operator stack
+                    if (operators.peek() != null && getAssociativity(operators.peek()) == Assoc.RIGHT && getAssociativity(symbol) == Assoc.RIGHT) {
+                        operators.push(symbol);
+                        continue;
+                    } else { // 2-2^2*2 22^*2-
+                        //If symbol has lower, or equal, precedence than the stack, the stack will pop till the new symbol is of higher precedence
+                        while (operators.peek() != null && getPrecedence(operators.peek()) >= getPrecedence(symbol)) {
                             result.add(operators.pop());
                         }
                     }
+
+//                    }
                     operators.push(symbol);
                 }
             }
         }
 
-        for (
-                String s : operators) {
+        while (!operators.isEmpty()) {
             result.add(operators.pop());
         }
 //        System.out.println(result);
