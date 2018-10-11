@@ -34,14 +34,15 @@ class Calculator {
         // TODO List<String> tokens = tokenize(expr);
         // TODO List<String> postfix = infix2Postfix(tokens);
         // TODO double result = evalPostfix(postfix);
-        return 0; // result;
+        List<String> tokens = tokenize(expr);
+        List<String> postfix = infixToPostfix(tokens);
+        double result = evalPostfix(postfix);
+        return result;
     }
 
     // ------  Evaluate RPN expression -------------------
 
-    // TODO Eval methods
-
-    public double evalPostfix(List<String> list) {
+    private double evalPostfix(List<String> list) {
         ArrayDeque<String> stack = new ArrayDeque<>();
         for (String element : list) {
             stack.push(element);
@@ -86,23 +87,8 @@ class Calculator {
         ArrayList<String> result = new ArrayList<>(), parenthesesList = new ArrayList<>();
         boolean readingParentheses = false;
         for (String symbol : infix) {
-            if (readingParentheses) { //reading stuff in a parentheses
-                if (symbol.equals("(")) {
-                    parenthesesStack.push(symbol);
-                    parenthesesList.add(symbol);
-                } else if (symbol.equals(")")) {
-                    if (parenthesesStack.isEmpty()) {
-                        //The content in a parentheses is handled separately
-                        List<String> parResult = infixToPostfix(parenthesesList);
-                        result.addAll(parResult);
-                        readingParentheses = false;
-                    } else {
-                        parenthesesStack.pop();
-                        parenthesesList.add(symbol);
-                    }
-                } else {
-                    parenthesesList.add(symbol);
-                }
+            if (readingParentheses) {
+                readingParentheses = readParentheses(symbol, parenthesesStack, parenthesesList, result);
             } else {
                 if (symbol.equals("(")) { //TODO throw exceptions
                     readingParentheses = true;
@@ -121,7 +107,6 @@ class Calculator {
                             result.add(operators.pop());
                         }
                     }
-
 //                    }
                     operators.push(symbol);
                 }
@@ -133,6 +118,27 @@ class Calculator {
         }
 //        System.out.println(result);
         return result;
+    }
+
+    private boolean readParentheses(String s, ArrayDeque<String> parStack, List<String> parList, List<String> result) {
+        switch (s) {
+            case "(":
+                parStack.push(s);
+                parList.add(s);
+                return true;
+            case ")":
+                if (parStack.isEmpty()) {
+                    List<String> parResult = infixToPostfix(parList);
+                    result.addAll(parResult);
+                    return false;
+                }
+                parStack.pop();
+                parList.add(s);
+                return true;
+            default:
+                parList.add(s);
+                return true;
+        }
     }
 
     private boolean isNumber(String s) {
@@ -196,7 +202,6 @@ class Calculator {
             chars.add(s.charAt(i));
         }
         List<String> result = combineDigits(chars);
-//        System.out.println(result.toString());
         return result;
     }
 
