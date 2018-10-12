@@ -97,7 +97,6 @@ class Calculator {
                     result.add(symbol);
                 } else {
                     //If the stack operator is of higher or equal value than the read operator, pop the stack operator to the result
-//                    if (operators.peek() != null && getPrecedence(operators.peek()) >= getPrecedence(symbol)) {
                     //If symbol has associativity to the right (eg. if symbol is equal to "^"), the push symbol the the operator stack
                     if (operators.peek() != null && getAssociativity(operators.peek()) == Assoc.RIGHT && getAssociativity(symbol) == Assoc.RIGHT) {
                         operators.push(symbol);
@@ -108,7 +107,6 @@ class Calculator {
                             result.add(operators.pop());
                         }
                     }
-//                    }
                     operators.push(symbol);
                 }
             }
