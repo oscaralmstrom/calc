@@ -17,12 +17,15 @@ import static java.lang.Math.pow;
 class Calculator {
 
     // Here are the only allowed instance variables!
-    // Error messages (more on static later)
     final static String MISSING_OPERAND = "Missing or bad operand";
     final static String DIV_BY_ZERO = "Division with 0";
     final static String MISSING_OPERATOR = "Missing operator or parenthesis";
     final static String OP_NOT_FOUND = "Operator not found";
     final static String OPERATORS = "+-*/^"; // Definition of operators
+
+    enum Assoc {
+        LEFT, RIGHT
+    }
 
     double eval(String expr) {
         if (expr.length() == 0) {
@@ -30,22 +33,20 @@ class Calculator {
         }
         List<String> tokens = tokenize(expr);
         List<String> postfix = infixToPostfix(tokens);
-        double result = evalPostfix(postfix);
-        return result;
+        return evalPostfix(postfix);
     }
-
-    // ------  Evaluate RPN expression -------------------
 
     double evalPostfix(List<String> list) {
         ArrayDeque<String> stack = new ArrayDeque<>();
         for (String element : list) {
             stack.push(element);
-            String s = stack.peek();
-            if (isOperator(s)) {
-                if (stack.size() < 3) throw new IllegalArgumentException(MISSING_OPERAND);
+            if (isOperator(stack.peek())) {
+                if (stack.size() < 3) {
+                    throw new IllegalArgumentException(MISSING_OPERAND); //not enough operands and/or operators
+                }
                 String operator = stack.pop();
-                String a = stack.pop();
-                String b = stack.pop();
+                String a = stack.pop(); //first operand
+                String b = stack.pop(); //second operand
                 if (isNumber(a) && isNumber(b)) {
                     stack.push(String.valueOf(applyOperator(operator, Double.valueOf(a), Double.valueOf(b))));
                 } else {
@@ -53,7 +54,6 @@ class Calculator {
                 }
             }
         }
-//        if (!stack.isEmpty()) throw new IllegalArgumentException(MISSING_OPERATOR);
         return Double.parseDouble(stack.pop());
     }
 
@@ -76,8 +76,6 @@ class Calculator {
         throw new RuntimeException(OP_NOT_FOUND);
     }
 
-    // ------- Infix 2 Postfix ------------------------
-
     public List<String> infixToPostfix(List<String> infix) {
         ArrayDeque<String> operators = new ArrayDeque<>(), parenthesesStack = new ArrayDeque<>();
         ArrayList<String> result = new ArrayList<>(), parenthesesList = new ArrayList<>();
@@ -86,31 +84,36 @@ class Calculator {
             if (readingParentheses) {
                 readingParentheses = readParentheses(symbol, parenthesesStack, parenthesesList, result);
             } else {
-                if (symbol.equals("(")) {
-                    readingParentheses = true;
-                } else if (symbol.equals(")")) {
+                if (symbol.equals(")")) {
+                    //not reading in a parentheses, but read a closing parentheses
                     throw new IllegalArgumentException(MISSING_OPERATOR);
-                } else if (isNumber(symbol)) { //if any of the chars is a digit, then the entire string is a number
+                } else if (symbol.equals("(")) {
+                    readingParentheses = true; //will start reading a parentheses separately
+                } else if (isNumber(symbol)) {
                     result.add(symbol);
                 } else {
                     boolean isOperatorAsscToRight = (!operators.isEmpty() && getAssociativity(operators.peek()) == Assoc.RIGHT
                             && getAssociativity(symbol) == Assoc.RIGHT);
                     if (!isOperatorAsscToRight) {
                         //If symbol has lower, or equal, precedence than the stack, the stack will pop till the new symbol is of higher precedence
-                        popHigherPrecedenceInStack(result, symbol, operators);
+                        popHigherPrecedenceInStack(symbol, result, operators);
                     }
                     operators.push(symbol);
                 }
             }
+
         }
-        if (readingParentheses) throw new IllegalArgumentException(MISSING_OPERATOR);
+        if (readingParentheses) {
+            //If still reading a parentheses, there more opening parentheses than closing ones.
+            throw new IllegalArgumentException(MISSING_OPERATOR);
+        }
         result.addAll(operators);
         return result;
     }
 
-    private void popHigherPrecedenceInStack(List<String> result, String symbol, Deque<String> operators) {
-        while (!operators.isEmpty() && getPrecedence(operators.peek()) >= getPrecedence(symbol)) {
-            result.add(operators.pop());
+    private void popHigherPrecedenceInStack(String symbol, List<String> targetList, Deque<String> operatorStack) {
+        while (!operatorStack.isEmpty() && getPrecedence(operatorStack.peek()) >= getPrecedence(symbol)) {
+            targetList.add(operatorStack.pop());
         }
     }
 
@@ -162,10 +165,6 @@ class Calculator {
         }
     }
 
-    enum Assoc {
-        LEFT, RIGHT;
-    }
-
     private Assoc getAssociativity(String op) {
         if ("+-*/".contains(op)) {
             return Assoc.LEFT;
@@ -175,8 +174,6 @@ class Calculator {
             throw new RuntimeException(OP_NOT_FOUND);
         }
     }
-
-    // ---------- Tokenize -----------------------
 
     public List<String> tokenize(String s) {
         List<String> tokens = new ArrayList<>();
@@ -238,14 +235,3 @@ class Calculator {
     }
     */
 }
-//    List<String> tokenize(String s) {
-//        List<Character> chars = new ArrayList<>();
-//        for (int i = 0; i < s.length(); i++) {
-//            if (Character.isWhitespace(s.charAt(i))) {
-//                continue;
-//            }
-//            chars.add(s.charAt(i));
-//        }
-//        List<String> result = combineDigits(chars);
-//        return result;
-//    }
