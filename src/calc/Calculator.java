@@ -97,15 +97,9 @@ class Calculator {
                     result.add(symbol);
                 } else {
                     //If the stack operator is of higher or equal value than the read operator, pop the stack operator to the result
-                    //If symbol has associativity to the right (eg. if symbol is equal to "^"), the push symbol the the operator stack
-                    if (operators.peek() != null && getAssociativity(operators.peek()) == Assoc.RIGHT && getAssociativity(symbol) == Assoc.RIGHT) {
-                        operators.push(symbol);
-                        continue;
-                    } else { // 2-2^2*2 22^*2-
+                    if (!isOperatorInStackAndSymbolPow(symbol, operators)) {
                         //If symbol has lower, or equal, precedence than the stack, the stack will pop till the new symbol is of higher precedence
-                        while (operators.peek() != null && getPrecedence(operators.peek()) >= getPrecedence(symbol)) {
-                            result.add(operators.pop());
-                        }
+                        popHigherPrecedenceInStack(result, symbol, operators);
                     }
                     operators.push(symbol);
                 }
