@@ -105,12 +105,24 @@ class Calculator {
                 }
             }
         }
+        popStackToResultsTillEmpty(result, operators);
+        return result;
+    }
 
+    private Boolean isOperatorInStackAndSymbolPow(String symbol, Deque<String> operators) {
+        return (!operators.isEmpty() && getAssociativity(operators.peek()) == Assoc.RIGHT && getAssociativity(symbol) == Assoc.RIGHT);
+    }
+
+    private void popHigherPrecedenceInStack(List<String> result, String symbol, Deque<String> operators) {
+        while (!operators.isEmpty() && getPrecedence(operators.peek()) >= getPrecedence(symbol)) {
+            result.add(operators.pop());
+        }
+    }
+
+    private void popStackToResultsTillEmpty(List<String> result, Deque<String> operators) {
         while (!operators.isEmpty()) {
             result.add(operators.pop());
         }
-//        System.out.println(result);
-        return result;
     }
 
     private boolean readParentheses(String s, ArrayDeque<String> parStack, List<String> parList, List<String> result) {
