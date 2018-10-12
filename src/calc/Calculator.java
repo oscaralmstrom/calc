@@ -1,9 +1,11 @@
 package calc;
 
-import java.util.*;
-
 import static java.lang.Double.NaN;
 import static java.lang.Math.pow;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
 
 /*
  *   A calculator for rather simple arithmetic expressions
