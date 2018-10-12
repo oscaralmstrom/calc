@@ -53,6 +53,7 @@ class Calculator {
                 }
             }
         }
+//        if (!stack.isEmpty()) throw new IllegalArgumentException(MISSING_OPERATOR);
         return Double.parseDouble(stack.pop());
     }
 
@@ -90,8 +91,9 @@ class Calculator {
                 } else if (isNumber(symbol)) { //if any of the chars is a digit, then the entire string is a number
                     result.add(symbol);
                 } else {
-                    //If the stack operator is of higher or equal value than the read operator, pop the stack operator to the result
-                    if (!isOperatorInStackAndSymbolPow(symbol, operators)) {
+                    boolean isOperatorAsscToRight = (!operators.isEmpty() && getAssociativity(operators.peek()) == Assoc.RIGHT
+                            && getAssociativity(symbol) == Assoc.RIGHT);
+                    if (!isOperatorAsscToRight) {
                         //If symbol has lower, or equal, precedence than the stack, the stack will pop till the new symbol is of higher precedence
                         popHigherPrecedenceInStack(result, symbol, operators);
                     }
@@ -103,9 +105,9 @@ class Calculator {
         return result;
     }
 
-    private Boolean isOperatorInStackAndSymbolPow(String symbol, Deque<String> operators) {
-        return (!operators.isEmpty() && getAssociativity(operators.peek()) == Assoc.RIGHT && getAssociativity(symbol) == Assoc.RIGHT);
-    }
+//    private Boolean isOperatorInStackAndSymbolPow(String symbol, Deque<String> operators) {
+//        return (!operators.isEmpty() && getAssociativity(operators.peek()) == Assoc.RIGHT && getAssociativity(symbol) == Assoc.RIGHT);
+//    }
 
     private void popHigherPrecedenceInStack(List<String> result, String symbol, Deque<String> operators) {
         while (!operators.isEmpty() && getPrecedence(operators.peek()) >= getPrecedence(symbol)) {
@@ -186,8 +188,12 @@ class Calculator {
     public List<String> tokenize(String s) {
         List<String> tokens = new ArrayList<>();
         ArrayDeque<Character> digits = new ArrayDeque<>();
+        boolean wasPrevWhitespace = false;
         for (int i = 0; i < s.length(); i++) {
             if (Character.isDigit(s.charAt(i))) {
+                if (wasPrevWhitespace && !digits.isEmpty()) {
+                    throw new IllegalArgumentException(MISSING_OPERATOR);
+                }
                 digits.push(s.charAt(i)); //pushes the digit to the digit stack, as it might be a part of a number
             } else if (isOperator(String.valueOf(s.charAt(i))) || s.charAt(i) == '(' || s.charAt(i) == ')') {
                 if (digits.isEmpty()) {
@@ -195,9 +201,10 @@ class Calculator {
                 } else {
                     //the digit stack isn't empty -> the digit stack values are reversed and merged into one string (a number)
                     tokens.add(reverseStackToString(digits));
-                    digits.clear();
                     tokens.add(String.valueOf(s.charAt(i))); //adds the operator to the tokens
                 }
+            } else if (Character.isWhitespace(s.charAt(i))) {
+                wasPrevWhitespace = true;
             }
         }
         //Adds any remaining digits to the tokens, by merging them into one string (representing a number)
