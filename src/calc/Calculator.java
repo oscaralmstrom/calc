@@ -18,22 +18,16 @@ class Calculator {
 
     // Here are the only allowed instance variables!
     // Error messages (more on static later)
-    final static String MISSING_OPERAND = "Missing or bad operand";
-    final static String DIV_BY_ZERO = "Division with 0";
-    final static String MISSING_OPERATOR = "Missing operator or parenthesis";
-    final static String OP_NOT_FOUND = "Operator not found";
+    private final static String MISSING_OPERAND = "Missing or bad operand";
+    private final static String DIV_BY_ZERO = "Division with 0";
+    private final static String MISSING_OPERATOR = "Missing operator or parenthesis";
+    private final static String OP_NOT_FOUND = "Operator not found";
+    private final static String OPERATORS = "+-*/^"; // Definition of operators
 
-    // Definition of operators
-    final static String OPERATORS = "+-*/^";
-
-    // Method used in REPL
     double eval(String expr) {
         if (expr.length() == 0) {
             return NaN;
         }
-        // TODO List<String> tokens = tokenize(expr);
-        // TODO List<String> postfix = infix2Postfix(tokens);
-        // TODO double result = evalPostfix(postfix);
         List<String> tokens = tokenize(expr);
         List<String> postfix = infixToPostfix(tokens);
         double result = evalPostfix(postfix);
@@ -42,12 +36,12 @@ class Calculator {
 
     // ------  Evaluate RPN expression -------------------
 
-    private double evalPostfix(List<String> list) {
+    double evalPostfix(List<String> list) {
         ArrayDeque<String> stack = new ArrayDeque<>();
         for (String element : list) {
             stack.push(element);
             String s = stack.peek();
-            if (s != null && isOperator(s)) {
+            if (isOperator(s)) {
                 if (stack.size() < 3) throw new IllegalArgumentException(MISSING_OPERAND);
                 String operator = stack.pop();
                 String a = stack.pop();
@@ -62,7 +56,7 @@ class Calculator {
         return Double.parseDouble(stack.pop());
     }
 
-    double applyOperator(String op, double d1, double d2) {
+    private double applyOperator(String op, double d1, double d2) {
         switch (op) {
             case "+":
                 return d1 + d2;
@@ -157,7 +151,7 @@ class Calculator {
         return OPERATORS.contains(s);
     }
 
-    int getPrecedence(String op) {
+    private int getPrecedence(String op) {
         if ("+-".contains(op)) {
             return 2;
         } else if ("*/".contains(op)) {
@@ -170,11 +164,10 @@ class Calculator {
     }
 
     enum Assoc {
-        LEFT,
-        RIGHT
+        LEFT, RIGHT;
     }
 
-    Assoc getAssociativity(String op) {
+    private Assoc getAssociativity(String op) {
         if ("+-*/".contains(op)) {
             return Assoc.LEFT;
         } else if ("^".contains(op)) {
@@ -191,7 +184,7 @@ class Calculator {
         ArrayDeque<Character> digits = new ArrayDeque<>();
         for (int i = 0; i < s.length(); i++) {
             if (Character.isDigit(s.charAt(i))) {
-                digits.push(s.charAt(i)); //pushes the digit to the digit stack, as it might be part of a number
+                digits.push(s.charAt(i)); //pushes the digit to the digit stack, as it might be a part of a number
             } else if (isOperator(String.valueOf(s.charAt(i))) || s.charAt(i) == '(' || s.charAt(i) == ')') {
                 if (digits.isEmpty()) {
                     tokens.add(String.valueOf(s.charAt(i))); //simply add the value to the tokens
@@ -241,29 +234,14 @@ class Calculator {
     }
     */
 }
-// TODO Methods
-//    while there are tokens to be read:
-//    read a token.
-//    if the token is a number, then:
-//    push it to the output queue.
-//            if the token is a function then:
-//    push it onto the operator stack
-//    if the token is an operator, then:
-//            while ((there is a function at the top of the operator stack)
-//    or (there is an operator at the top of the operator stack with greater precedence)
-//    or (the operator at the top of the operator stack has equal precedence and is left associative))
-//    and (the operator at the top of the operator stack is not a left bracket):
-//    pop operators from the operator stack onto the output queue.
-//    push it onto the operator stack.
-//            if the token is a left bracket (i.e. "("), then:
-//    push it onto the operator stack.
-//            if the token is a right bracket (i.e. ")"), then:
-//            while the operator at the top of the operator stack is not a left bracket:
-//    pop the operator from the operator stack onto the output queue.
-//    pop the left bracket from the stack.
-//    /* if the stack runs out without finding a left bracket, then there are mismatched parentheses. */
-//if there are no more tokens to read:
-//            while there are still operator tokens on the stack:
-//    /* if the operator token on the top of the stack is a bracket, then there are mismatched parentheses. */
-//    pop the operator from the operator stack onto the output queue.
-//            exit.
+//    List<String> tokenize(String s) {
+//        List<Character> chars = new ArrayList<>();
+//        for (int i = 0; i < s.length(); i++) {
+//            if (Character.isWhitespace(s.charAt(i))) {
+//                continue;
+//            }
+//            chars.add(s.charAt(i));
+//        }
+//        List<String> result = combineDigits(chars);
+//        return result;
+//    }
