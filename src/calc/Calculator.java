@@ -18,11 +18,11 @@ class Calculator {
 
     // Here are the only allowed instance variables!
     // Error messages (more on static later)
-    private final static String MISSING_OPERAND = "Missing or bad operand";
-    private final static String DIV_BY_ZERO = "Division with 0";
-    private final static String MISSING_OPERATOR = "Missing operator or parenthesis";
-    private final static String OP_NOT_FOUND = "Operator not found";
-    private final static String OPERATORS = "+-*/^"; // Definition of operators
+    final static String MISSING_OPERAND = "Missing or bad operand";
+    final static String DIV_BY_ZERO = "Division with 0";
+    final static String MISSING_OPERATOR = "Missing operator or parenthesis";
+    final static String OP_NOT_FOUND = "Operator not found";
+    final static String OPERATORS = "+-*/^"; // Definition of operators
 
     double eval(String expr) {
         if (expr.length() == 0) {
@@ -86,8 +86,10 @@ class Calculator {
             if (readingParentheses) {
                 readingParentheses = readParentheses(symbol, parenthesesStack, parenthesesList, result);
             } else {
-                if (symbol.equals("(")) { //TODO throw exceptions
+                if (symbol.equals("(")) {
                     readingParentheses = true;
+                } else if (symbol.equals(")")) {
+                    throw new IllegalArgumentException(MISSING_OPERATOR);
                 } else if (isNumber(symbol)) { //if any of the chars is a digit, then the entire string is a number
                     result.add(symbol);
                 } else {
@@ -101,6 +103,7 @@ class Calculator {
                 }
             }
         }
+        if (readingParentheses) throw new IllegalArgumentException(MISSING_OPERATOR);
         result.addAll(operators);
         return result;
     }
