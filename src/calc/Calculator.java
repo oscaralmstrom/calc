@@ -181,10 +181,9 @@ class Calculator {
         boolean wasPrevWhitespace = false;
         for (int i = 0; i < s.length(); i++) {
             if (Character.isDigit(s.charAt(i))) {
-//                if (wasPrevWhitespace && !digits.isEmpty()) {
-//                    throw new IllegalArgumentException(MISSING_OPERATOR);
-//                }
+                if (wasPrevWhitespace && !digits.isEmpty()) throw new IllegalArgumentException(MISSING_OPERATOR);
                 digits.push(s.charAt(i)); //pushes the digit to the digit stack, as it might be a part of a number
+                wasPrevWhitespace = false;
             } else if (isOperator(String.valueOf(s.charAt(i))) || s.charAt(i) == '(' || s.charAt(i) == ')') {
                 if (digits.isEmpty()) {
                     tokens.add(String.valueOf(s.charAt(i))); //simply add the value to the tokens
@@ -193,11 +192,9 @@ class Calculator {
                     tokens.add(reverseStackToString(digits));
                     tokens.add(String.valueOf(s.charAt(i))); //adds the operator to the tokens
                 }
-            }
-            if (Character.isWhitespace(s.charAt(i))) {
-                wasPrevWhitespace = true;
-            } else {
                 wasPrevWhitespace = false;
+            } else if (Character.isWhitespace(s.charAt(i))) {
+                wasPrevWhitespace = true;
             }
         }
         //Adds any remaining digits to the tokens, by merging them into one string (representing a number)
