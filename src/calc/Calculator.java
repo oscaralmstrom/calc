@@ -203,8 +203,11 @@ class Calculator {
                     tokens.add(reverseStackToString(digits));
                     tokens.add(String.valueOf(s.charAt(i))); //adds the operator to the tokens
                 }
-            } else if (Character.isWhitespace(s.charAt(i))) {
+            }
+            if (Character.isWhitespace(s.charAt(i))) {
                 wasPrevWhitespace = true;
+            } else {
+                wasPrevWhitespace = false;
             }
         }
         //Adds any remaining digits to the tokens, by merging them into one string (representing a number)
