@@ -101,22 +101,12 @@ class Calculator {
                 }
             }
         }
-        popStackToResultsTillEmpty(result, operators);
+        result.addAll(operators);
         return result;
     }
 
-//    private Boolean isOperatorInStackAndSymbolPow(String symbol, Deque<String> operators) {
-//        return (!operators.isEmpty() && getAssociativity(operators.peek()) == Assoc.RIGHT && getAssociativity(symbol) == Assoc.RIGHT);
-//    }
-
     private void popHigherPrecedenceInStack(List<String> result, String symbol, Deque<String> operators) {
         while (!operators.isEmpty() && getPrecedence(operators.peek()) >= getPrecedence(symbol)) {
-            result.add(operators.pop());
-        }
-    }
-
-    private void popStackToResultsTillEmpty(List<String> result, Deque<String> operators) {
-        while (!operators.isEmpty()) {
             result.add(operators.pop());
         }
     }
@@ -191,9 +181,9 @@ class Calculator {
         boolean wasPrevWhitespace = false;
         for (int i = 0; i < s.length(); i++) {
             if (Character.isDigit(s.charAt(i))) {
-                if (wasPrevWhitespace && !digits.isEmpty()) {
-                    throw new IllegalArgumentException(MISSING_OPERATOR);
-                }
+//                if (wasPrevWhitespace && !digits.isEmpty()) {
+//                    throw new IllegalArgumentException(MISSING_OPERATOR);
+//                }
                 digits.push(s.charAt(i)); //pushes the digit to the digit stack, as it might be a part of a number
             } else if (isOperator(String.valueOf(s.charAt(i))) || s.charAt(i) == '(' || s.charAt(i) == ')') {
                 if (digits.isEmpty()) {
